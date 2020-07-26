@@ -17,8 +17,8 @@ pipeline {
             steps {
                 script{
 
-                    withEnv(readFile("${ENVFILE}").split('\n') as List) {
-                        VERSION=echo "${VERSION}"
+                    withEnv(readFile("${ENVFILE}") as List) {
+                        echo "${VERSION}"
                     }
                 }
 
@@ -26,6 +26,7 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
+                load "${CODE_ENVFILE}"
                 sh('printenv | sort')    
             }
         }
