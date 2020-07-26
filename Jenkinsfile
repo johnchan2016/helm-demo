@@ -68,15 +68,14 @@ pipeline {
                             sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
 
                             def gitStatus = sh(script: 'git status', returnStdout: true)
-                            echo "${gitStatus}"
 
                             if (gitStatus ==~ /(.*)nothing to commit(.*)/){
+                                echo 'nothing to commit'
+                            } else {
                                 sh 'git status -s'
                                 sh 'git add .'
                                 sh "git commit -m 'Update version no to ${env.VERSION}'"
                                 sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
-                            } else {
-                                echo 'nothing to commit'
                             }
                         }
                     }
