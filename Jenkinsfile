@@ -26,7 +26,6 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
-                load "${CODE_ENVFILE}"
                 sh('printenv | sort')    
             }
         }
