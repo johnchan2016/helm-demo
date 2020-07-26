@@ -24,6 +24,11 @@ node {
         }
     }
 
+    stage('Push Image') {
+      app.push('${VERSION}');
+      app.push('latest');
+    }
+
     stage('git push') {
         dir("helm-chart") {
             withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
