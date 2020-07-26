@@ -18,12 +18,7 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
-
-                dir("helm-demo"){
-                    sh 'ls'
-                    sh 'bash env.sh'
-                }
-                
+                sh 'bash env.sh'                
             }
         }
 
