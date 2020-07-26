@@ -22,7 +22,7 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                dockerImage = docker.build registry + ":${VERSION}"
                 }
             }
         }
@@ -54,16 +54,22 @@ pipeline {
                         script {
                             env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
                             env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
+
+                            if (fileExists('file')) {
+                                sh "rm -rf  ${HELM_ENVFILE}"
+                                echo "Yes"
+                            } else {
+                                echo "No"
+                            }
                         }
                         
                         sh 'git config --global user.name "johnchan"'
                         sh 'git config --global user.email myhk2009@gmail.com'
-                        sh "rm ${env.HELM_ENVFILE}"
-                        sh "echo VERSION=$VERSION >> ${env.HELM_ENVFILE}"
-                        sh "echo REGION=$REGION >> ${env.HELM_ENVFILE}"
+                        sh "echo VERSION=${VERSION} >> ${HELM_ENVFILE}"
+                        sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
                         sh 'git status'
                         sh 'git add .'
-                        sh "git commit -m 'Update version no to $VERSION'"
+                        sh "git commit -m 'Update version no to ${VERSION}'"
                         sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                     }
                 }      
