@@ -70,7 +70,7 @@ pipeline {
                             def gitStatus = sh('echo git status')
                             echo "${gitStatus}"
 
-                            if (gitStatus =~ /nothing to commit/)){
+                            if (gitStatus ==~ /(.*)nothing to commit(.*)/){
                                 sh 'git status -s'
                                 sh 'git add .'
                                 sh "git commit -m 'Update version no to ${env.VERSION}'"
