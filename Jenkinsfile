@@ -18,15 +18,16 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
-                sh 'source ./${ENVFILE}'                
+                sh 'source ./${ENVFILE}'
+                sh('printenv | sort')    
             }
         }
 
         stage('Building image') {
             steps{
                 script {
-                    echo 'VERSION: ${VERSION}';
-                    echo 'VERSION: ${env.VERSION}';
+                    echo "VERSION: ${VERSION}";
+                    echo "VERSION: ${env.VERSION}";
                     dockerImage = docker.build registry + ":${env.VERSION}"
                 }
             }
@@ -56,7 +57,7 @@ pipeline {
                             env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
                             env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
 
-                            if (fileExists('file')) {
+                            if (fileExists("${ENVFILE}")) {
                                 sh "rm -rf  ${ENVFILE}"
                                 echo "Yes"
                             } else {
