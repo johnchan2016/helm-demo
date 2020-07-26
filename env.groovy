@@ -1,1 +1,1 @@
-VERSION=1.1.0
+env.VERSION=1.1.0
