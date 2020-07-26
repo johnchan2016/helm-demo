@@ -13,19 +13,12 @@ node {
         checkout scm
     }
 
-    stage('Build image') {
+    stage('Build & Deploy image') {
         sh 'echo "Start Build"'
-        app = docker.build("myhk2009/whale:1.0.0")
-    }
-
-    stage('Test image') {
-        app.inside {
-            sh 'echo "Tests passed"'
+        docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
+            app = docker.build("myhk2009/whale:1.0.0")
+            app.push();
         }
-    }
-
-    stage('Deploy Image') {
-      app.push();
     }
 
     stage('git push') {
