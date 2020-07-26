@@ -13,8 +13,13 @@ pipeline {
     agent any
 
     stages {
+        def SN = sh("source ./${ENVFILE}")
+
+
+
         stage('Cloning Git') {
             steps {
+                sh "SN=${SN}"
                 sh 'echo "Start Clone"'
                 checkout scm
 
