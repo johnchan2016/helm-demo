@@ -4,7 +4,7 @@ pipeline {
     registryCredential = 'dockerHubCredentials'
     dockerImage = ''
 
-    VERSION="1.1.0"
+    VERSION=''
     REGION="hk"
     HELM_ENVFILE="env.properties"
   }
@@ -14,15 +14,23 @@ pipeline {
     stages {
         stage('Cloning Git') {
             steps {
-                sh 'echo "Start Clone"'
-                checkout scm
+                step {
+                    sh 'echo "Start Clone"'
+                    checkout scm
+                }
+
+                step {
+                    dir("helm-demo"){
+                        sh './env.sh'
+                    }
+                }
             }
         }
 
         stage('Building image') {
             steps{
                 script {
-                dockerImage = docker.build registry + ":${VERSION}"
+                    dockerImage = docker.build registry + ":${VERSION}"
                 }
             }
         }
