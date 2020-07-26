@@ -1,1 +1,1 @@
-env.VERSION="1.1.1"
+env.VERSION="1.1.2"

@@ -65,6 +65,7 @@ pipeline {
                             sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
 
                             def gitStatus = sh(script: 'git status', returnStdout: true)
+                            echo "gitStatus: ${gitStatus}"
                             if (gitStatus =~ /(.*)nothing to commit(.*)/){
                                 echo 'nothing to commit'
                             } else {
