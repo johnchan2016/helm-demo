@@ -14,16 +14,13 @@ pipeline {
     stages {
         stage('Cloning Git') {
             steps {
-                step {
-                    sh 'echo "Start Clone"'
-                    checkout scm
-                }
+                sh 'echo "Start Clone"'
+                checkout scm
 
-                step {
-                    dir("helm-demo"){
-                        sh './env.sh'
-                    }
+                dir("helm-demo"){
+                    sh './env.sh'
                 }
+                
             }
         }
 
