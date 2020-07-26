@@ -61,16 +61,20 @@ pipeline {
                             } else {
                                 echo "No"
                             }
+                                                    
+                            sh 'git config --global user.name "johnchan"'
+                            sh 'git config --global user.email myhk2009@gmail.com'
+                            sh "echo VERSION=${env.VERSION} >> ${HELM_ENVFILE}"
+                            sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
+
+                            def gitStatus = echo 'git status -s'
+                            echo gitStatus 
+                            if (gitStatus =~ /nothing to commit/)
+                            sh 'git status -s'
+                            sh 'git add .'
+                            sh "git commit -m 'Update version no to ${env.VERSION}'"
+                            sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                         }
-                        
-                        sh 'git config --global user.name "johnchan"'
-                        sh 'git config --global user.email myhk2009@gmail.com'
-                        sh "echo VERSION=${env.VERSION} >> ${HELM_ENVFILE}"
-                        sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
-                        sh 'git status -s'
-                        sh 'git add .'
-                        sh "git commit -m 'Update version no to ${env.VERSION}'"
-                        sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                     }
                 }      
             }
