@@ -2,10 +2,10 @@ node {
     def app
 
     environment {
-      code_envFilePath="./config/env.txt";
-      helm_envFilePath="env.txt";
-      VERSION=1.0.0;
-      REGION=hk;
+      code_envFilePath="./config/env.txt"
+      helm_envFilePath="env.txt"
+      VERSION=1.0.0
+      REGION=hk
     }
 
     stage('Clone repository') {
