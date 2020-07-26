@@ -11,5 +11,5 @@ RUN npm install
 COPY . .
 
 EXPOSE 3000
-ENTRYPOINT ["/bin/bash" , "-c", "source /env.sh && printenv"]
+ENTRYPOINT ["/bin/bash" , "-c", "source ./env.sh && printenv"]
 CMD [ "node", "app.js" ]
