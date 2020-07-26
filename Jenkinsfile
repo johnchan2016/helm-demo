@@ -1,3 +1,41 @@
+/* pipeline {
+  environment {
+    registry = "myhk2009/whale"
+    registryCredential = 'dockerHubCredentials'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/gustavoapolinario/microservices-node-example-todo-frontend.git'
+      }
+    }
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
+      }
+    }
+  }
+}
+ */
+
 node {
     def app
     def code_envFilePath
@@ -8,7 +46,7 @@ node {
     environment {
       code_envFilePath="./config/env.txt"
       helm_envFilePath="env.txt"
-      VERSION="1.0.0"
+      VERSION="1.1.0"
       REGION="hk"
     }
 
@@ -20,8 +58,8 @@ node {
     stage('Build & Deploy image') {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale:1.0.0")
-            app.push();
+            app = docker.build("myhk2009/whale")
+            app.push(VERSION);
         }
     }
 
@@ -47,7 +85,7 @@ node {
                 // sh "echo REGION=${REGION} >> ${helm_envFilePath}"
                 sh 'git status'
                 sh 'git add .'
-                sh "git commit -m 'Update version no to ${VERSION}'"
+                sh "git commit -m 'Update version no to $VERSION'"
                 sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
             }
         }
