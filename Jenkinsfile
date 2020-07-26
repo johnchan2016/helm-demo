@@ -67,7 +67,7 @@ pipeline {
                             sh "echo VERSION=${env.VERSION} >> ${HELM_ENVFILE}"
                             sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
 
-                            def gitStatus = sh('echo git status')
+                            def gitStatus = sh(script: 'git status', returnStdout: true)
                             echo "${gitStatus}"
 
                             if (gitStatus ==~ /(.*)nothing to commit(.*)/){
