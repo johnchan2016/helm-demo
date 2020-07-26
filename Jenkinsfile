@@ -1,16 +1,24 @@
-/* pipeline {
+pipeline {
   environment {
     registry = "myhk2009/whale"
     registryCredential = 'dockerHubCredentials'
     dockerImage = ''
+
+    VERSION="1.1.0"
+    REGION="hk"
+    HELM_ENVFILE="env.properties"
   }
+
   agent any
+
   stages {
     stage('Cloning Git') {
       steps {
-        git 'https://github.com/gustavoapolinario/microservices-node-example-todo-frontend.git'
+        sh 'echo "Start Clone"'
+        checkout scm
       }
     }
+
     stage('Building image') {
       steps{
         script {
@@ -18,6 +26,7 @@
         }
       }
     }
+
     stage('Deploy Image') {
       steps{
         script {
@@ -27,76 +36,90 @@
         }
       }
     }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
-      }
-    }
-  }
-}
- */
 
-node {
-    def app
-    def code_envFilePath
-    def helm_envFilePath
-    def VERSION
-    def REGION
-
-    environment {
-      VERSION="1.1.0"
-      REGION="hk"
-    }
-
-    stage('Clone repository') {
-        sh 'echo "Start Clone"'
-        checkout scm
-    }
-
-    stage('Build & Deploy image') {
-        sh 'echo "Start Build"'
-        docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale:${env.VERSION}")
-            app.push();
-        }
-    }
-
-    stage('git push') {
-        environment {
-            helm_envFilePath="env.properties"
-        }
-
-        dir("helm-chart") {
-            deleteDir()
-        }
-
-        sh 'git clone https://github.com/johnchan2016/helm-chart.git'
-
-        dir("helm-chart") {
-            withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                script {
-                    env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
-                    env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
-                }
-                
-                sh 'git config --global user.name "johnchan"'
-                sh 'git config --global user.email myhk2009@gmail.com'
-                // sh "echo ${VERSION}"
-                sh "rm ${env.helm_envFilePath}"
-                sh "echo VERSION=$VERSION >> $helm_envFilePath"
-                sh "echo REGION=$REGION >> $helm_envFilePath"
-                sh 'git status'
-                sh 'git add .'
-                sh "git commit -m 'Update version no to $VERSION'"
-                sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
+    stage('helm-chart') {
+        steps{
+            dir("helm-chart") {
+                deleteDir()
             }
+
+            sh 'git clone https://github.com/johnchan2016/helm-chart.git'
+
+            dir("helm-chart") {
+                withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    script {
+                        env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
+                        env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
+                    }
+                    sh 'VERSION: $VERSION'
+                    sh 'VERSION: ${VERSION}'
+                    sh 'VERSION: ${env.VERSION}'
+                    
+                    sh 'git config --global user.name "johnchan"'
+                    sh 'git config --global user.email myhk2009@gmail.com'
+                    sh "rm ${env.HELM_ENVFILE}"
+                    sh "echo VERSION=$VERSION >> ${env.HELM_ENVFILE}"
+                    sh "echo REGION=$REGION >> ${env.HELM_ENVFILE}"
+                    sh 'git status'
+                    sh 'git add .'
+                    sh "git commit -m 'Update version no to $VERSION'"
+                    sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
+                }
+            }      
         }
     }
-
-/*     stage('Push image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'dockerhubCredentials') {
-            app.push("1.0.0")
-            app.push("latest")
-        }
-    } */
 }
+ 
+
+// node {
+//     def app
+
+//     environment {
+//       VERSION="1.1.0"
+//       REGION="hk"
+//     }
+
+//     stage('Clone repository') {
+//         sh 'echo "Start Clone"'
+//         checkout scm
+//     }
+
+//     stage('Build & Deploy image') {
+//         sh 'echo "Start Build"'
+//         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
+//             app = docker.build("myhk2009/whale:${env.VERSION}")
+//             app.push();
+//         }
+//     }
+
+//     stage('git push') {
+//         environment {
+//             helm_envFilePath="env.properties"
+//         }
+
+//         dir("helm-chart") {
+//             deleteDir()
+//         }
+
+//         sh 'git clone https://github.com/johnchan2016/helm-chart.git'
+
+//         dir("helm-chart") {
+//             withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+//                 script {
+//                     env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
+//                     env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
+//                 }
+                
+//                 sh 'git config --global user.name "johnchan"'
+//                 sh 'git config --global user.email myhk2009@gmail.com'
+//                 sh "rm ${env.helm_envFilePath}"
+//                 sh "echo VERSION=$VERSION >> $helm_envFilePath"
+//                 sh "echo REGION=$REGION >> $helm_envFilePath"
+//                 sh 'git status'
+//                 sh 'git add .'
+//                 sh "git commit -m 'Update version no to $VERSION'"
+//                 sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
+//             }
+//         }
+//     }
+// }
