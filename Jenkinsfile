@@ -1,5 +1,9 @@
 node {
     def app
+    def code_envFilePath
+    def helm_envFilePath
+    def VERSION
+    def REGION
 
     environment {
       code_envFilePath="./config/env.txt"
@@ -16,7 +20,7 @@ node {
     stage('Build & Deploy image') {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale:1.0.0")
+            app = docker.build("--env-file='.env'", "myhk2009/whale:${VERSION}")
             app.push();
         }
     }
