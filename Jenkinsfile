@@ -27,14 +27,18 @@ node {
 
     stage('git push') {
         dir("helm-chart") {
+            deleteDir()
+        }
+
+        sh 'git clone https://github.com/johnchan2016/helm-chart.git'
+
+        dir("helm-chart") {
             withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 script {
                     env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
                     env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
                 }
-
-                sh "if [ -d 'helm-chart' ]; then 'rm -rf helm-chart' fi"
-                sh 'git clone https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
+                
                 sh 'git config --global user.name "johnchan"'
                 sh 'git config --global user.email myhk2009@gmail.com'
                 // sh "echo ${VERSION}"
