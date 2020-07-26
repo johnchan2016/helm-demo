@@ -56,8 +56,8 @@ node {
     stage('Build & Deploy image') {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale")
-            app.push($VERSION);
+            app = docker.build("myhk2009/whale:$VERSION")
+            app.push(VERSION);
         }
     }
 
