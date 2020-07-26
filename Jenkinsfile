@@ -6,6 +6,7 @@ pipeline {
 
     VERSION=""
     REGION="hk"
+    CODE_ENVFILE="env.groovy"
     ENVFILE="env.properties"
   }
 
@@ -18,8 +19,7 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
-                sh "source ./${ENVFILE}"
-                sh ". ${ENVFILE}"
+                load "${CODE_ENVFILE}"
                 sh('printenv | sort')    
             }
         }
