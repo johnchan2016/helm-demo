@@ -56,7 +56,7 @@ node {
     stage('Build & Deploy image') {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale:$VERSION")
+            app = docker.build("myhk2009/whale:${env.VERSION}")
             app.push();
         }
     }
@@ -82,7 +82,7 @@ node {
                 sh 'git config --global user.name "johnchan"'
                 sh 'git config --global user.email myhk2009@gmail.com'
                 // sh "echo ${VERSION}"
-                sh "rm $helm_envFilePath"
+                sh "rm ${env.helm_envFilePath}"
                 sh "echo VERSION=$VERSION >> $helm_envFilePath"
                 sh "echo REGION=$REGION >> $helm_envFilePath"
                 sh 'git status'
