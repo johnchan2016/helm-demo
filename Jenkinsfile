@@ -28,17 +28,18 @@ node {
                     env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
                     env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
                 }
-                
+
+                sh 'git pull https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                 sh 'ls'
                 sh 'git config --global user.name "johnchan"'
                 sh 'git config --global user.email myhk2009@gmail.com'
+                sh "echo ${VERSION}"
                 sh 'rm ${helm_envFilePath}'
                 sh 'echo VERSION=${VERSION} >> ${helm_envFilePath}'
                 sh 'echo REGION=${REGION} >> ${helm_envFilePath}'
                 sh 'git status'
                 sh 'git add .'
                 sh "git commit -m 'Update version no to ${VERSION}'"
-                sh 'git pull https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                 sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
             }
         }
