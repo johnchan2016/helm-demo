@@ -21,7 +21,7 @@ pipeline {
 
                 dir("helm-demo"){
                     sh 'ls'
-                    sh './env.sh'
+                    sh 'env.sh'
                 }
                 
             }
