@@ -15,7 +15,7 @@ node {
 
     stage('Build image') {
         sh 'echo "Start Build"'
-        app = docker.build("myhk2009/whale:${VERSION}")
+        app = docker.build("myhk2009/whale:1.0.0")
     }
 
     stage('Test image') {
@@ -24,7 +24,7 @@ node {
         }
     }
 
-    stage('Push Image') {
+    stage('Deploy Image') {
       app.push();
     }
 
