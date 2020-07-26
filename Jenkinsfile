@@ -16,9 +16,12 @@ pipeline {
         stage('Cloning Git') {
             steps {
                 script{
-                    def SN = sh("source ./${ENVFILE}")
+
+                    withEnv(readFile("${ENVFILE}").split('\n') as List) {
+                        sh "echo VERSION=${VERSION}"
+                    }
                 }
-                sh "SN=${SN}"
+
                 sh 'echo "Start Clone"'
                 checkout scm
 
