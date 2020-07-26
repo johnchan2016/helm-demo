@@ -44,8 +44,6 @@ node {
     def REGION
 
     environment {
-      code_envFilePath="./config/env.txt"
-      helm_envFilePath="env.txt"
       VERSION="1.1.0"
       REGION="hk"
     }
@@ -59,11 +57,15 @@ node {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
             app = docker.build("myhk2009/whale")
-            app.push(VERSION);
+            app.push($VERSION);
         }
     }
 
     stage('git push') {
+        environment {
+            helm_envFilePath="env.properties"
+        }
+
         dir("helm-chart") {
             deleteDir()
         }
@@ -80,9 +82,9 @@ node {
                 sh 'git config --global user.name "johnchan"'
                 sh 'git config --global user.email myhk2009@gmail.com'
                 // sh "echo ${VERSION}"
-                // sh "rm ${helm_envFilePath}"
-                // sh "echo VERSION=${VERSION} >> ${helm_envFilePath}"
-                // sh "echo REGION=${REGION} >> ${helm_envFilePath}"
+                sh "rm $helm_envFilePath"
+                sh "echo VERSION=$VERSION >> $helm_envFilePath"
+                sh "echo REGION=$REGION >> $helm_envFilePath"
                 sh 'git status'
                 sh 'git add .'
                 sh "git commit -m 'Update version no to $VERSION'"
