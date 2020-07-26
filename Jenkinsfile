@@ -18,7 +18,7 @@ pipeline {
                 script{
 
                     withEnv(readFile("${ENVFILE}").split('\n') as List) {
-                        sh "echo VERSION=${VERSION}"
+                        VERSION=echo "${VERSION}"
                     }
                 }
 
