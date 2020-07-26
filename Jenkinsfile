@@ -20,7 +20,7 @@ node {
     stage('Build & Deploy image') {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale:${IAMGE_VERSION}")
+            app = docker.build("myhk2009/whale:1.0.0")
             app.push();
         }
     }
