@@ -25,8 +25,8 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    sh 'VERSION: ${VERSION}';
-                    sh 'VERSION: ${env.VERSION}';
+                    echo 'VERSION: ${VERSION}';
+                    echo 'VERSION: ${env.VERSION}';
                     dockerImage = docker.build registry + ":${env.VERSION}"
                 }
             }
