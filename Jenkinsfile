@@ -16,10 +16,7 @@ pipeline {
         stage('Cloning Git') {
             steps {
                 script{
-
-                    withEnv(readFile("${ENVFILE}") as List) {
-                        echo "${VERSION}"
-                    }
+                    readProperties(file: "${ENVFILE}").each {key, value -> env[key] = value }
                 }
 
                 sh 'echo "Start Clone"'
