@@ -67,8 +67,8 @@ pipeline {
                             sh "echo VERSION=${env.VERSION} >> ${HELM_ENVFILE}"
                             sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
 
-                            def gitStatus = echo 'git status -s'
-                            echo '${gitStatus}'
+                            def gitStatus = sh('git status -s')
+                            echo "${gitStatus}"
 
                             if (gitStatus =~ /nothing to commit/){
                                 sh 'git status -s'
