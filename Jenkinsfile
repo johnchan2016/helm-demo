@@ -33,7 +33,7 @@ node {
                     env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
                 }
 
-                sh "rm ./helm-chart"
+                sh "rm -rf helm-chart"
                 sh 'git clone https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                 sh 'git config --global user.name "johnchan"'
                 sh 'git config --global user.email myhk2009@gmail.com'
