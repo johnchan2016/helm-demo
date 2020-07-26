@@ -6,7 +6,7 @@ pipeline {
 
     VERSION=''
     REGION="hk"
-    HELM_ENVFILE="env.properties"
+    ENVFILE="env.properties"
   }
 
     agent any
@@ -18,7 +18,7 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
-                sh 'bash env.sh'                
+                sh 'source ./${ENVFILE}'                
             }
         }
 
@@ -42,10 +42,6 @@ pipeline {
 
         stage('helm-chart') {
             steps{
-                echo "VERSION: $VERSION"
-                echo "VERSION: ${VERSION}"
-                echo "VERSION: ${env.VERSION}"
-
                 dir("helm-chart") {
                     deleteDir()
                 }
@@ -59,7 +55,7 @@ pipeline {
                             env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
 
                             if (fileExists('file')) {
-                                sh "rm -rf  ${HELM_ENVFILE}"
+                                sh "rm -rf  ${ENVFILE}"
                                 echo "Yes"
                             } else {
                                 echo "No"
@@ -68,8 +64,8 @@ pipeline {
                         
                         sh 'git config --global user.name "johnchan"'
                         sh 'git config --global user.email myhk2009@gmail.com'
-                        sh "echo VERSION=${VERSION} >> ${HELM_ENVFILE}"
-                        sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
+                        sh "echo VERSION=${VERSION} >> ${ENVFILE}"
+                        sh "echo REGION=${REGION} >> ${ENVFILE}"
                         sh 'git status'
                         sh 'git add .'
                         sh "git commit -m 'Update version no to ${VERSION}'"
