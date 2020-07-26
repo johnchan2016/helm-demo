@@ -6,7 +6,7 @@ pipeline {
 
     REGION="hk"
     CODE_ENVFILE="env.groovy"
-    ENVFILE="env.properties"
+    HELM_ENVFILE="env.properties"
   }
 
     agent any
@@ -17,7 +17,6 @@ pipeline {
                 sh 'echo "Start Clone"'
                 checkout scm
 
-                sh 'ls'
                 load "${CODE_ENVFILE}"
                 sh('printenv | sort')    
             }
@@ -56,8 +55,8 @@ pipeline {
                             env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
                             env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
 
-                            if (fileExists("${ENVFILE}")) {
-                                sh "rm -rf  ${ENVFILE}"
+                            if (fileExists("${HELM_ENVFILE}")) {
+                                sh "rm -rf  ${HELM_ENVFILE}"
                                 echo "Yes"
                             } else {
                                 echo "No"
@@ -66,8 +65,8 @@ pipeline {
                         
                         sh 'git config --global user.name "johnchan"'
                         sh 'git config --global user.email myhk2009@gmail.com'
-                        sh "echo VERSION=${env.VERSION} >> ${ENVFILE}"
-                        sh "echo REGION=${REGION} >> ${ENVFILE}"
+                        sh "echo VERSION=${env.VERSION} >> ${HELM_ENVFILE}"
+                        sh "echo REGION=${REGION} >> ${HELM_ENVFILE}"
                         sh 'git status'
                         sh 'git add .'
                         sh "git commit -m 'Update version no to ${env.VERSION}'"
