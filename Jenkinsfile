@@ -2,9 +2,9 @@ pipeline {
   environment {
     registry = "myhk2009/whale"
     registryCredential = 'dockerHubCredentials'
-    dockerImage = ''
+    dockerImage = ""
 
-    VERSION=''
+    VERSION=""
     REGION="hk"
     ENVFILE="env.properties"
   }
@@ -18,7 +18,8 @@ pipeline {
                 checkout scm
 
                 sh 'ls'
-                sh 'source ./${ENVFILE}'
+                sh "source ./${ENVFILE}"
+                sh ". ${ENVFILE}"
                 sh('printenv | sort')    
             }
         }
