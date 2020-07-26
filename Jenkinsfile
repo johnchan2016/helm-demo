@@ -4,7 +4,6 @@ pipeline {
     registryCredential = 'dockerHubCredentials'
     dockerImage = ""
 
-    VERSION=""
     REGION="hk"
     CODE_ENVFILE="env.groovy"
     ENVFILE="env.properties"
@@ -15,10 +14,6 @@ pipeline {
     stages {
         stage('Cloning Git') {
             steps {
-                script{
-                    readProperties(file: "${ENVFILE}").each {key, value -> env[key] = value }
-                }
-
                 sh 'echo "Start Clone"'
                 checkout scm
 
@@ -31,7 +26,6 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    echo "VERSION: ${VERSION}";
                     echo "VERSION: ${env.VERSION}";
                     dockerImage = docker.build registry + ":${env.VERSION}"
                 }
@@ -72,11 +66,11 @@ pipeline {
                         
                         sh 'git config --global user.name "johnchan"'
                         sh 'git config --global user.email myhk2009@gmail.com'
-                        sh "echo VERSION=${VERSION} >> ${ENVFILE}"
+                        sh "echo VERSION=${env.VERSION} >> ${ENVFILE}"
                         sh "echo REGION=${REGION} >> ${ENVFILE}"
                         sh 'git status'
                         sh 'git add .'
-                        sh "git commit -m 'Update version no to ${VERSION}'"
+                        sh "git commit -m 'Update version no to ${env.VERSION}'"
                         sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                     }
                 }      
