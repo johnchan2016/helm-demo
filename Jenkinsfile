@@ -17,7 +17,10 @@ pipeline {
                 sh 'echo "Start Clone"'
                 checkout scm
 
+                sh 'ls'
+
                 dir("helm-demo"){
+                    sh 'ls'
                     sh './env.sh'
                 }
                 
