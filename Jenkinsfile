@@ -9,63 +9,65 @@ pipeline {
     HELM_ENVFILE="env.properties"
   }
 
-  agent any
+    agent any
 
-  stages {
-    stage('Cloning Git') {
-      steps {
-        sh 'echo "Start Clone"'
-        checkout scm
-      }
-    }
-
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
-        }
-      }
-    }
-
-    stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push()
-          }
-        }
-      }
-    }
-
-    stage('helm-chart') {
-        steps{
-            dir("helm-chart") {
-                deleteDir()
+    stages {
+        stage('Cloning Git') {
+            steps {
+                sh 'echo "Start Clone"'
+                checkout scm
             }
+        }
 
-            sh 'git clone https://github.com/johnchan2016/helm-chart.git'
-
-            dir("helm-chart") {
-                withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                    script {
-                        env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
-                        env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
-                    }
-                    sh 'VERSION: $VERSION'
-                    sh 'VERSION: ${VERSION}'
-                    sh 'VERSION: ${env.VERSION}'
-                    
-                    sh 'git config --global user.name "johnchan"'
-                    sh 'git config --global user.email myhk2009@gmail.com'
-                    sh "rm ${env.HELM_ENVFILE}"
-                    sh "echo VERSION=$VERSION >> ${env.HELM_ENVFILE}"
-                    sh "echo REGION=$REGION >> ${env.HELM_ENVFILE}"
-                    sh 'git status'
-                    sh 'git add .'
-                    sh "git commit -m 'Update version no to $VERSION'"
-                    sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
+        stage('Building image') {
+            steps{
+                script {
+                dockerImage = docker.build registry + ":$BUILD_NUMBER"
                 }
-            }      
+            }
+        }
+
+        stage('Deploy Image') {
+            steps{
+                script {
+                    docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('helm-chart') {
+            steps{
+                echo "VERSION: $VERSION"
+                echo "VERSION: ${VERSION}"
+                echo "VERSION: ${env.VERSION}"
+
+                dir("helm-chart") {
+                    deleteDir()
+                }
+
+                sh 'git clone https://github.com/johnchan2016/helm-chart.git'
+
+                dir("helm-chart") {
+                    withCredentials([usernamePassword(credentialsId: 'gitHubCredentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        script {
+                            env.encodedUser=URLEncoder.encode(GIT_USERNAME, "UTF-8")
+                            env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
+                        }
+                        
+                        sh 'git config --global user.name "johnchan"'
+                        sh 'git config --global user.email myhk2009@gmail.com'
+                        sh "rm ${env.HELM_ENVFILE}"
+                        sh "echo VERSION=$VERSION >> ${env.HELM_ENVFILE}"
+                        sh "echo REGION=$REGION >> ${env.HELM_ENVFILE}"
+                        sh 'git status'
+                        sh 'git add .'
+                        sh "git commit -m 'Update version no to $VERSION'"
+                        sh 'git push https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
+                    }
+                }      
+            }
         }
     }
 }
