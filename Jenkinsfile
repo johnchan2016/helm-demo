@@ -20,7 +20,7 @@ node {
     stage('Build & Deploy image') {
         sh 'echo "Start Build"'
         docker.withRegistry('https://registry.hub.docker.com', 'dockerHubCredentials') {
-            app = docker.build("myhk2009/whale:${VERSION}")
+            app = docker.build("myhk2009/whale:${IAMGE_VERSION}")
             app.push();
         }
     }
@@ -33,6 +33,7 @@ node {
                     env.encodedPass=URLEncoder.encode(GIT_PASSWORD, "UTF-8")
                 }
 
+                sh "rm ./helm-chart"
                 sh 'git clone https://${encodedUser}:${encodedPass}@github.com/johnchan2016/helm-chart.git'
                 sh 'git config --global user.name "johnchan"'
                 sh 'git config --global user.email myhk2009@gmail.com'
