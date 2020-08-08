@@ -1,0 +1,8 @@
+name: whale
+labels:
+  app.kubernetes.io/component: whale
+image: myhk2009/whale/1.0.0
+workdir: /src
+command: ["bash"]
+forward:
+  - 3000:3080
