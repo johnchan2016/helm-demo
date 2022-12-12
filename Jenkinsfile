@@ -12,7 +12,7 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    echo "VERSION: ${env.VERSION}";
+                    //echo "VERSION: ${env.VERSION}";
                     //dockerImage = docker.build registry + ":${env.VERSION}"
 										app = docker.build("octopus-underwater-app")
                 }
