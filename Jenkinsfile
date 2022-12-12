@@ -1,26 +1,16 @@
-pipeline {
-		def app
-    agent any
-    options {
-        skipStagesAfterUnstable()
-    }
-    stages {
-         stage('Clone repository') { 
-            steps { 
-                script{
-                checkout scm
-                }
-            }
-        }
+node {
+    def app
 
-        stage('Build') { 
-            app = docker.build("getintodevops/hellonode")
-        }
-				
-        stage('Test'){
-            steps {
-                 echo 'Empty'
-            }
-        }
+    stage('Clone repository') {
+        /* Let's make sure we have the repository cloned to our workspace */
+
+        checkout scm
+    }
+
+    stage('Build image') {
+        /* This builds the actual image; synonymous to
+         * docker build on the command line */
+
+        app = docker.build("getintodevops/hellonode")
     }
 }
