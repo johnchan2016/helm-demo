@@ -1,11 +1,18 @@
 pipeline {
-    agent { dockerfile true }
+    agent any
     stages {
         stage('Test') {
-            steps {
-                sh 'node --version'
-                sh 'svn --version'
-            }
+					script{
+						checkout scm
+					}
         }
+				
+				stage('Build') { 
+					steps { 
+						script{
+									app = docker.build("octopus-underwater-app")
+								}
+						}
+				}
     }
 }
