@@ -1,18 +1,22 @@
 pipeline {
     agent any
-    stages {
-        stage('Test') {
-					script{
-						checkout scm
-					}
+		
+		stages {
+        stage('Cloning Git') {
+            steps {
+                sh 'echo "Start Clone"'
+                checkout scm
+            }
         }
-				
-				stage('Build') { 
-					steps { 
-						script{
-									app = docker.build("octopus-underwater-app")
-								}
-						}
-				}
-    }
+
+        stage('Building image') {
+            steps{
+                script {
+                    echo "VERSION: ${env.VERSION}";
+                    //dockerImage = docker.build registry + ":${env.VERSION}"
+										app = docker.build("octopus-underwater-app")
+                }
+            }
+        }
+		}
 }
