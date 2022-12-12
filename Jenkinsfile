@@ -19,7 +19,7 @@ pipeline {
                 }
             }
 						
-						app = docker.build("underwater")
+						//app = docker.build("underwater")
         }
 				
         stage('Test'){
