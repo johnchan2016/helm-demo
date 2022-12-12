@@ -15,10 +15,13 @@ pipeline {
         stage('Build') { 
             steps { 
                 script{
-                 app = docker.build("underwater")
+								 docker -v
                 }
             }
+						
+						app = docker.build("underwater")
         }
+				
         stage('Test'){
             steps {
                  echo 'Empty'
