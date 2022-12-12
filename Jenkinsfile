@@ -1,22 +1,28 @@
 pipeline {
     agent any
-		
-		stages {
-        stage('Cloning Git') {
-            steps {
-                sh 'echo "Start Clone"'
+    options {
+        skipStagesAfterUnstable()
+    }
+    stages {
+         stage('Clone repository') { 
+            steps { 
+                script{
                 checkout scm
-            }
-        }
-
-        stage('Building image') {
-            steps{
-                script {
-                    //echo "VERSION: ${env.VERSION}";
-                    //dockerImage = docker.build registry + ":${env.VERSION}"
-										app = docker.build("octopus-underwater-app")
                 }
             }
         }
-		}
+
+        stage('Build') { 
+            steps { 
+                script{
+                 app = docker.build("underwater")
+                }
+            }
+        }
+        stage('Test'){
+            steps {
+                 echo 'Empty'
+            }
+        }
+    }
 }
